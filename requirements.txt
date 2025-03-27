@@ -10,3 +10,4 @@ redis==5.0.8
 requests==2.32.3
 whitenoise==6.7.0
 daphne==4.1.2  # Add this line
+django-cors-headers
