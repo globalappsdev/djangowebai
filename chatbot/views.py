@@ -210,12 +210,8 @@ def chatbot(request):
             user_history.append({"user": user_message, "bot": bot_response})
             response = JsonResponse({"response": bot_response})
         else:
-            response_text = sendtoAi(user_message, user_history)
-            try:
-                response_json = json.loads(response_text)
-                bot_response = response_json["response"]
-            except json.JSONDecodeError:
-                bot_response = "Sorry, I couldn’t process that. How can I assist you?"
+            bot_response = sendtoAi(user_message, user_history)
+           
             
             user_history.append({"user": user_message, "bot": bot_response})
             if len(user_history) > 10:
