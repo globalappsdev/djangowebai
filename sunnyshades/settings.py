@@ -116,6 +116,8 @@ CORS_ALLOWED_ORIGINS = [
     'https://globalappsdev.github.io',  # Add your GitHub Pages origin
     'http://localhost:8000',           # For local testing
 ]
+CORS_ALLOW_METHODS = ['GET', 'POST', 'OPTIONS']
+CORS_ALLOW_HEADERS = ['Content-Type']
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
