@@ -1,1 +1,1 @@
-web: gunicorn sunnyshades.wsgi:application --workers 4
+web: daphne sunnyshades.asgi:application --port $PORT --bind 0.0.0.0
