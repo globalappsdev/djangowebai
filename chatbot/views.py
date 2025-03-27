@@ -202,27 +202,38 @@ def chatbot(request):
             send_telegram_message(settings.TELEGRAM_AGENT_CHAT_ID, message_to_agent)
             bot_response = "I’ve notified an agent. They’ll join the chat soon."
             user_history.append({"user": user_message, "bot": bot_response})
-            return JsonResponse({"response": bot_response})
-
-        if user_agent_chat["is_agent_chat"]:
+            response = JsonResponse({"response": bot_response})
+        elif user_agent_chat["is_agent_chat"]:
             message_to_agent = f"[{user_id}] {user_message}"
             send_telegram_message(settings.TELEGRAM_AGENT_CHAT_ID, message_to_agent)
             bot_response = "Message sent to agent. Please wait for their reply."
             user_history.append({"user": user_message, "bot": bot_response})
-            return JsonResponse({"response": bot_response})
-
-        response_text = sendtoAi(user_message, user_history)
-        try:
-            response_json = json.loads(response_text)
-            bot_response = response_json["response"]
-        except json.JSONDecodeError:
-            bot_response = "Sorry, I couldn’t process that. How can I assist you?"
+            response = JsonResponse({"response": bot_response})
+        else:
+            response_text = sendtoAi(user_message, user_history)
+            try:
+                response_json = json.loads(response_text)
+                bot_response = response_json["response"]
+            except json.JSONDecodeError:
+                bot_response = "Sorry, I couldn’t process that. How can I assist you?"
+            
+            user_history.append({"user": user_message, "bot": bot_response})
+            if len(user_history) > 10:
+                user_history.pop(0)
+            response = JsonResponse({"response": bot_response})
         
-        user_history.append({"user": user_message, "bot": bot_response})
-        if len(user_history) > 10:
-            user_history.pop(0)
-        
-        return JsonResponse({"response": bot_response})
+        # Add CORS headers
+        response['Access-Control-Allow-Origin'] = '*'  # For development; restrict in production
+        response['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+        response['Access-Control-Allow-Headers'] = 'Content-Type'
+        return response
+    
+    # Handle non-POST requests (e.g., OPTIONS for CORS preflight)
+    response = JsonResponse({"error": "Method not allowed"}, status=405)
+    response['Access-Control-Allow-Origin'] = '*'
+    response['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+    response['Access-Control-Allow-Headers'] = 'Content-Type'
+    return response
 
 @csrf_exempt
 def telegram_webhook(request):
