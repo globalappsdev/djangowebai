@@ -112,7 +112,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+CORS_ALLOWED_ORIGINS = [
+    'https://globalappsdev.github.io',  # Add your GitHub Pages origin
+    'http://localhost:8000',           # For local testing
+]
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
