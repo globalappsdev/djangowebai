@@ -1,0 +1,1 @@
+web: gunicorn sunnyshades.wsgi:application --workers 4
